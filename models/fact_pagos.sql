@@ -4,7 +4,7 @@ CREATE TABLE fact_pagos (
     payment_date DATE,
     amount_paid DECIMAL(15, 2),
     days_late INT,
-    -- Relaciones
+    -- relaciones
     FOREIGN KEY (credit_id) REFERENCES dim_credito(credit_id),
     FOREIGN KEY (payment_date) REFERENCES dim_tiempo(date_id)
 );
