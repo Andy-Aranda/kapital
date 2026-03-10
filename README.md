@@ -1,5 +1,4 @@
-# Kapital
-## Challenge Técnico
+# Kapital: Challenge Técnico
 Este repositorio contiene la solución al challenge técnico para la posición de Ingeniero de Datos. El objetivo es diseñar un modelo analítico para una financiera de PYMES que permita evaluar el desempeño de la colocación de créditos y el comportamiento de pagos.
 
 ### 🏗️ Estructura del Proyecto
