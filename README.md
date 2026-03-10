@@ -44,34 +44,6 @@ Para llevar los datos de un sistema transaccional (OLTP) a un Data Warehouse en 
 2. Manejo de Incrementalidad:  Implementaría una estrategia de Watermarking utilizando la columna ```updated_at``` de las tablas origen para extraer solo registros nuevos o modificados desde la última ejecución.
     - Para la carga en las tablas finales, usaría la sentencia MERGE de Delta Lake para realizar Upserts (Update + Insert) eficientes.
 
-graph LR
-    subgraph Origen
-        A[Sistemas Transaccionales <br/> OLTP - SQL Server/Postgres]
-    end
-
-    subgraph "Azure / AWS (Data Lakehouse)"
-        B[(Capa Bronze <br/> Raw Data / Delta)]
-        C[(Capa Silver <br/> Cleaned / Validated)]
-        D[(Capa Gold <br/> Analytical / Star Schema)]
-        
-        A -->|Ingesta Incremental <br/> ADF / Airflow| B
-        B -->|Transformación PySpark| C
-        C -->|Modelo de Datos| D
-    end
-
-    subgraph Consumo
-        E[Power BI / Tableau]
-        F[Data Science / ML]
-        D --> E
-        D --> F
-    end
-
-    style B fill:#cd7f32,stroke:#333,color:#fff
-    style C fill:#c0c0c0,stroke:#333,color:#000
-    style D fill:#ffd700,stroke:#333,color:#000
-
-
-
 ### 3. Calidad de Datos
 - Validaciones: Implementación de restricciones NOT NULL en llaves primarias, validación de rangos (ej. amount > 0) y consistencia de tipos de datos.
 
