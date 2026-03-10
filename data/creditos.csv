@@ -1,0 +1,7 @@
+﻿credit_id,customer_id,origination_date,amount,term_months,interest_rate,status
+C001,CUST_01,2023-01-15,100000,12,0.15,closed
+C002,CUST_02,2023-01-20,50000,6,0.12,active
+C003,CUST_03,2023-02-10,200000,24,0.18,default
+C004,CUST_04,2023-02-25,80000,12,0.14,late
+C005,CUST_05,2023-03-05,150000,12,0.16,active
+C006,CUST_06,2023-03-12,120000,18,0.15,active
