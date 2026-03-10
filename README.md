@@ -17,13 +17,13 @@ Este repositorio contiene la solución al challenge técnico para la posición d
 Se optó por un modelo dimensional tipo Estrella. Debido a que el negocio tiene dos procesos con distinta granularidad (Originación de crédito y Recepción de pagos), se implementaron dos tablas de hechos que comparten dimensiones (Fact Constellation).
 
 - Tablas de Hechos:
-    - fact_creditos: Registra la colocación inicial del crédito.
-    - fact_pagos: Registra cada transacción de pago y días de atraso.
+    - ```fact_creditos```: Registra la colocación inicial del crédito.
+    - ```fact_pagos```: Registra cada transacción de pago y días de atraso.
 
 - Dimensiones:
-    - dim_tiempo: Permite el análisis por cohortes (mes/año) y trimestres.
-    - dim_credito: Contiene atributos del crédito (tasa, plazo, estatus).
-    - dim_cliente: Información del acreditado.
+    - ```dim_tiempo```: Permite el análisis por cohortes (mes/año) y trimestres.
+    - ```dim_credito```: Contiene atributos del crédito (tasa, plazo, estatus).
+    - ```dim_cliente```: Información del acreditado.
 
 #### Estrella vs. Copo de Nieve
 Se eligió el Esquema Estrella sobre el Copo de Nieve por:
@@ -42,7 +42,7 @@ Para llevar los datos de un sistema transaccional (OLTP) a un Data Warehouse en 
     - Procesamiento: Databricks (PySpark) para transformaciones distribuidas.
     - Almacenamiento: Delta Lake sobre Azure Data Lake Storage (ADLS).
 
-2. Manejo de Incrementalidad:  Implementaría una estrategia de Watermarking utilizando la columna updated_at de las tablas origen para extraer solo registros nuevos o modificados desde la última ejecución.
+2. Manejo de Incrementalidad:  Implementaría una estrategia de Watermarking utilizando la columna ```updated_at``` de las tablas origen para extraer solo registros nuevos o modificados desde la última ejecución.
     - Para la carga en las tablas finales, usaría la sentencia MERGE de Delta Lake para realizar Upserts (Update + Insert) eficientes.
 
 ### 3. Calidad de Datos
@@ -65,13 +65,13 @@ El proyecto utiliza DuckDB para simular el entorno analítico de forma local y e
 #### Pasos para replicar:
 1. Abrir la terminal en la raíz del proyecto.
 
-2. Ejecutar DuckDB: duckdb kapital.db
+2. Ejecutar DuckDB: ```duckdb kapital.db```
 
-3. Crear el modelo: .read models/dim_tiempo.sql, .read models/fact_creditos.sql, etc.
+3. Crear el modelo: ```.read models/dim_tiempo.sql```, ```.read models/fact_creditos.sql```, etc.
 
-4. Cargar datos: .read seeds.sql
+4. Cargar datos: ```.read seeds.sql```
 
-5. Ejecutar analíticos: .read sql/porcentaje_default_cohorte.sql
+5. Ejecutar analíticos: ```.read sql/porcentaje_default_cohorte.sql```
 
 
 ### 5. Escalabilidad en Producción
