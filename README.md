@@ -1,4 +1,4 @@
-# Kapital: Challenge Técnico
+# 💸 Kapital: Challenge Técnico 
 Este repositorio contiene la solución al challenge técnico para la posición de Ingeniero de Datos. El objetivo es diseñar un modelo analítico para una financiera de PYMES que permita evaluar el desempeño de la colocación de créditos y el comportamiento de pagos.
 
 ### 🏗️ Estructura del Proyecto
@@ -13,7 +13,7 @@ Este repositorio contiene la solución al challenge técnico para la posición d
 └── seeds.sql       # Script de carga de datos iniciales
 ```
 ### 1. Modelado de Datos
-#### Diseño: Esquema Estrella (Star Schema)
+#### Diseño: Esquema Estrella (Star Schema) ⭐️
 Se optó por un modelo dimensional tipo Estrella. Debido a que el negocio tiene dos procesos con distinta granularidad (originación de crédito y recepción de pagos), se implementaron dos tablas de hechos que comparten dimensiones (Fact Constellation).
 
 - Tablas de Hechos:
@@ -57,11 +57,11 @@ Para escalar esta solución a millones de registros:
 
 ### 4. Calidad de Datos
 #### Validaciones
-Implementaría validaciones en tres niveles dentro de la arquitectura Medallón:
+Implementaría validaciones en tres niveles dentro de la Arquitectura Medallón:
 
-1. Validación de Esquema (Capa Bronze): Asegurar que los tipos de datos sean correctos (ej. que amount sea numérico y no texto) y aplicar Schema Enforcement para evitar que cambios inesperados en el origen rompan el pipeline.
+1. Validación de Esquema (Capa Bronze): Asegurar que los tipos de datos sean correctos (ej. que ```amount``` sea numérico y no texto) y aplicar Schema Enforcement para evitar que cambios inesperados en el origen rompan el pipeline.
 
-2. Validación de Integridad (Capa Silver): * Not Nulls: Campos críticos como credit_id, payment_id, amount y origination_date deben ser obligatorios.
+2. Validación de Integridad (Capa Silver): Not Nulls: Campos críticos como ```credit_id```, ```payment_id```, ```amount``` y ```origination_date``` deben ser obligatorios.
 
     a) Rangos Lógicos: Validar que amount y amount_paid sean siempre mayores a cero y que la interest_rate esté en un rango lógico (ej. 0 a 1).
 
@@ -69,7 +69,6 @@ Implementaría validaciones en tres niveles dentro de la arquitectura Medallón:
 
 #### Detección de Duplicados
 La detección de duplicados se realizaría en la Capa Silver utilizando una Window Function. Esto permite identificar si un mismo ```payment_id``` ha sido enviado más de una vez (por error de sistema o re-procesamiento de archivos).
-
 
 ``` SQL
 SELECT *, 
@@ -79,13 +78,13 @@ SELECT *,
     ) as rn
 FROM staging_pagos; -- si rn > 1, es un duplicado
 ```
-- Acción: Cualquier registro con ```row_num >``` 1 es marcado como duplicado. En producción, se mantendría solo el más reciente y los demás se moverían a una tabla de Logs de Errores para auditoría.
+- Acción: Cualquier registro con ```row_num >``` 1 es marcado como duplicado. En producción, se mantendría solo el más reciente y los demás se moverían a una tabla adicional de Logs de Errores para auditoría.
 
 #### Consistencia entre créditos y pagos
 Implementaría tres reglas:
 
-1. Integridad Referencial: Mediante un LEFT JOIN entre fact_pagos y dim_credito, validaría que no existan "pagos huérfanos". Si un credit_id en la tabla de pagos no existe en la de créditos, el registro se envía a cuarentena.
+1. Integridad Referencial: Mediante un ```LEFT JOIN``` entre ```fact_pagos``` y ```dim_credito```, validaría que no existan "pagos huérfanos". Si un ```credit_id``` en la tabla de pagos no existe en la de créditos, el registro se envía a una tabla adicional para revisión.
 
-2. Consistencia Cronológica: Validar que la fecha de pago (payment_date) sea siempre igual o posterior a la fecha de originación del crédito (origination_date). Un pago anterior a la creación del crédito indica un error de sistema.
+2. Consistencia cronológica: Validar que la fecha de pago (```payment_date```) sea siempre igual o posterior a la fecha de originación del crédito (```origination_date```). Un pago anterior a la creación del crédito indica un error de sistema.
 
-3. Consistencia Financiera: Validar que la suma acumulada de amount_paid para un crédito no exceda significativamente el amount original más los intereses calculados (esto detectaría errores de sobre-pago o duplicidad de montos).
+3. Consistencia financiera: Validar que la suma acumulada de ```amount_paid``` para un crédito no exceda significativamente el amount original más los intereses calculados (se detectarían errores de sobrepago o duplicidad en montos).
