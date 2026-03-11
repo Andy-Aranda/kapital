@@ -11,6 +11,8 @@ Propongo una arquitectura ELT (Extract, Load, Transform) basada en la nube (Azur
 
 - Destino: Data Warehouse (Snowflake / Synapse) o tablas Delta para consumo en BI.
 
+![Flujo de pipeline](/images/pipeline.png)
+
 ## 2. Herramientas seleccionadas
 - Orquestador: Azure Data Factory (ADF) o Airflow. Elegidos por su capacidad de manejar dependencias complejas, reintentos y monitoreo centralizado.
 
