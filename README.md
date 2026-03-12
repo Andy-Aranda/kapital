@@ -1,6 +1,15 @@
 # 💸 Kapital: Challenge Técnico 
 Este repositorio contiene la solución al challenge técnico para la posición de Ingeniero de Datos. El objetivo es diseñar un modelo analítico para una financiera de PYMES que permita evaluar el desempeño de la colocación de créditos y el comportamiento de pagos.
 
+
+### 📝 Supuestos Realizados
+Para el desarrollo de este modelo, se consideraron los siguientes supuestos:
+1. **Tasa de Interés:** Se asume que la `interest_rate` proporcionada en la tabla de créditos es una tasa Anual Nominal.
+2. **Cálculo de Intereses:** El ingreso estimado por intereses se calcula sobre el monto original (`amount`) prorrateado por el plazo (`term_months`), asumiendo un esquema de interés simple para fines del modelo analítico.
+3. **Estado de Default:** Un crédito se considera en 'Default' únicamente cuando su `status` es explícitamente `default`, independientemente de los días de atraso en la tabla de pagos.
+4. **Moneda:** Se asume que todos los montos están expresados en la misma moneda.
+
+
 ### 🏗️ Estructura del Proyecto
 ```
 ├── data/           # Datos simulados en formato CSV
@@ -88,3 +97,39 @@ Implementaría tres reglas:
 2. Consistencia cronológica: Validar que la fecha de pago (```payment_date```) sea siempre igual o posterior a la fecha de originación del crédito (```origination_date```). Un pago anterior a la creación del crédito indica un error de sistema.
 
 3. Consistencia financiera: Validar que la suma acumulada de ```amount_paid``` para un crédito no exceda significativamente el amount original más los intereses calculados (se detectarían errores de sobrepago o duplicidad en montos).
+
+
+### 5. Decisiones Técnicas
+1. **DuckDB para Prototipado:** Se eligió DuckDB como motor de base de datos local debido a su alta velocidad para cargas analíticas y su capacidad de ejecutar SQL sin necesidad de configurar un servidor pesado.
+2. **Modelo Estrella:** Se prefirió sobre el Copo de Nieve para reducir la latencia de las consultas analíticas al minimizar los `JOINs`, facilitando el consumo para herramientas de visualización.
+3. **Window Functions:** Se decidió usar `ROW_NUMBER()` y `COUNT() OVER()` para el cálculo de duplicados y porcentajes de default, garantizando que el análisis no pierda la granularidad de los datos originales.
+
+----
+
+### Cómo ejecutar las queries
+Para replicar el análisis y validar los resultados, siga estos pasos:
+
+1. **Instalar DuckDB:** Asegúrese de tener instalado el CLI de DuckDB en su sistema.
+2. **Cargar la Base de Datos:**
+   Desde la terminal, en la raíz del proyecto, ejecute:
+   ```bash
+   duckdb kapital.db
+   ```
+
+3. **Inicializar y Poblar:** Dentro de la consola de DuckDB, ejecutar los modelos y las semillas:
+```bash
+.read models/dim_tiempo.sql
+.read models/dim_credito.sql
+.read models/dim_cliente.sql
+.read models/fact_creditos.sql
+.read models/fact_pagos.sql
+.read seeds.sql
+```
+
+4. **Ejecutar Analíticos:** Para responder a las preguntas del challenge, ejecutar los scripts en ```/sql```:
+```bash
+.read sql/monto_colocado_mes.sql
+.read sql/tasa_mora.sql
+.read sql/ingresos_intereses_cohorte.sql
+.read sql/porcentaje_default_cohorte.sql
+```
